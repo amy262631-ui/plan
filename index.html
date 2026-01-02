@@ -2,100 +2,205 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>Pink Pro Planner 🌸</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pink Modern Roadmap 🌸</title>
     <style>
-        /* 延用之前的流行粉色風格並加大字體 */
-        :root { --sidebar-bg: #FFF0F3; --accent: #FF8A8A; --text: #4A4A4A; }
-        body { font-family: 'Inter', 'Microsoft JhengHei', sans-serif; background: #fdfdfd; margin: 0; display: flex; font-size: 18px; }
-        .sidebar { width: 260px; background: var(--sidebar-bg); height: 100vh; position: fixed; border-right: 1px solid #FFE4E8; }
-        .sidebar-brand { padding: 40px 30px; font-size: 1.6rem; font-weight: bold; color: var(--accent); }
-        .sidebar-item { padding: 20px 30px; cursor: pointer; transition: 0.3s; border-radius: 0 30px 30px 0; margin-right: 20px; margin-bottom: 10px; }
-        .sidebar-item.active { background: var(--accent); color: white; }
-        .main { margin-left: 260px; flex-grow: 1; padding: 50px; }
-        .group-card { background: white; border-radius: 20px; padding: 30px; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #FFF5F6; }
-        .group-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #FFF5F6; padding-bottom: 15px; margin-bottom: 20px; }
-        .group-title { font-size: 1.8rem; font-weight: bold; cursor: pointer; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+        :root { 
+            --sidebar-bg: #FFF0F3; /* 櫻花粉 */
+            --main-bg: #fdfdfd;
+            --accent: #FF8A8A; /* 暖粉紅 */
+            --text-main: #4A4A4A;
+            --text-sub: #9B9B9B;
+            --border-radius: 20px;
+        }
+
+        body { 
+            font-family: 'Inter', 'Microsoft JhengHei', sans-serif; 
+            background: var(--main-bg); 
+            margin: 0; 
+            display: flex; 
+            color: var(--text-main); 
+            font-size: 18px; /* 全域字體加大 */
+        }
+        
+        /* 側邊欄風格 */
+        .sidebar { 
+            width: 260px; 
+            background: var(--sidebar-bg); 
+            height: 100vh; 
+            color: var(--text-main); 
+            position: fixed;
+            border-right: 1px solid #FFE4E8;
+            box-shadow: 4px 0 15px rgba(255,138,138,0.05);
+        }
+        .sidebar-brand { padding: 40px 30px; font-size: 1.6rem; font-weight: bold; color: var(--accent); letter-spacing: 1px; }
+        .sidebar-item { 
+            padding: 20px 30px; cursor: pointer; transition: 0.3s; 
+            display: flex; align-items: center; gap: 12px; font-size: 1.2rem;
+            margin: 10px 15px; border-radius: 15px;
+        }
+        .sidebar-item:hover { background: #FFFBFC; color: var(--accent); }
+        .sidebar-item.active { background: var(--accent); color: #fff; font-weight: 600; }
+
+        /* 主區域 */
+        .main { margin-left: 260px; flex-grow: 1; padding: 50px 70px; }
+        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px; }
+        h1 { font-size: 2.6rem; margin: 0; color: var(--accent); font-weight: 600; }
+
+        .btn-main { 
+            background: var(--accent); color: white; border: none; padding: 14px 28px; 
+            border-radius: 14px; cursor: pointer; font-size: 1.1rem; font-weight: 600;
+            transition: 0.3s; box-shadow: 0 4px 12px rgba(255,138,138,0.2);
+        }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(255,138,138,0.3); }
+
+        /* 大項目容器 */
+        .group-card { 
+            background: white; border-radius: var(--border-radius); margin-bottom: 45px; 
+            box-shadow: 0 12px 35px rgba(255,138,138,0.06); border: 1px solid #FFF5F6; 
+            padding: 35px;
+        }
+        .group-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding-bottom: 25px; border-bottom: 2px solid #FFF5F6; margin-bottom: 25px;
+        }
+        .group-title { font-size: 1.9rem; font-weight: 600; color: #333; cursor: pointer; }
         .group-title:hover { color: var(--accent); }
-        table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
-        td { padding: 25px; background: #FFFBFC; border-radius: 15px; }
-        .btn-icon { background: none; border: none; cursor: pointer; font-size: 1.1rem; margin-left: 10px; opacity: 0.6; }
-        .btn-icon:hover { opacity: 1; color: var(--accent); }
-        .countdown { font-size: 0.9rem; padding: 5px 12px; border-radius: 10px; font-weight: bold; }
-        .cd-soon { background: #FFE5E5; color: #FF6B6B; }
-        .cd-safe { background: #E5F9E0; color: #48BB78; }
-        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 100; }
-        .modal-box { background: white; padding: 40px; border-radius: 25px; width: 400px; }
-        input { width: 100%; padding: 15px; margin: 15px 0; border: 2px solid #FFF5F6; border-radius: 12px; font-size: 1rem; box-sizing: border-box; }
-        .btn-main { background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-size: 1rem; }
+
+        /* 表格設計 */
+        table { width: 100%; border-collapse: separate; border-spacing: 0 15px; }
+        td { padding: 25px; background: #FFFBFC; border-radius: 18px; transition: 0.2s; }
+        tr:hover td { background: #FFF5F7; }
+        
+        .task-text { font-size: 1.25rem; font-weight: 500; }
+        .task-done { text-decoration: line-through; color: #d1d1d1; }
+
+        /* 倒數天數標籤 */
+        .countdown { font-size: 1rem; padding: 6px 14px; border-radius: 10px; font-weight: 600; }
+        .cd-soon { background: #FFE5E5; color: #FF6B6B; border: 1px solid #FFD1D1; }
+        .cd-safe { background: #F0FFF4; color: #48BB78; border: 1px solid #C6F6D5; }
+        .cd-over { background: #F5F5F5; color: #AAA; }
+
+        /* 進度條 */
+        .prog-container { background: #eee; height: 14px; border-radius: 10px; width: 220px; overflow: hidden; }
+        .prog-fill { height: 100%; background: linear-gradient(90deg, #FFB7B7, #FF8A8A); transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* 操作按鈕 */
+        .btn-icon { background: none; border: none; cursor: pointer; font-size: 1.3rem; margin-left: 15px; opacity: 0.5; transition: 0.2s; }
+        .btn-icon:hover { opacity: 1; color: var(--accent); transform: scale(1.1); }
+
+        /* Modal 彈窗 */
+        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); backdrop-filter: blur(6px); justify-content: center; align-items: center; z-index: 100; }
+        .modal-box { background: white; padding: 45px; border-radius: 28px; width: 450px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+        .modal-box h2 { margin-top: 0; color: var(--accent); }
+        input { width: 100%; padding: 16px; margin: 18px 0; border: 2px solid #FFF5F6; border-radius: 14px; font-size: 1.1rem; outline: none; box-sizing: border-box; }
+        input:focus { border-color: var(--accent); }
+
+        .btn-sub-add { margin-top: 25px; width: 100%; padding: 18px; border: 2px dashed #FFD1D1; background: none; border-radius: 15px; color: var(--accent); cursor: pointer; font-size: 1.1rem; font-weight: 600; }
+        .btn-sub-add:hover { background: rgba(255,138,138,0.03); border-style: solid; }
     </style>
 </head>
 <body>
+
     <div class="sidebar">
-        <div class="sidebar-brand">Plan Pink 🌸</div>
-        <div class="sidebar-item active" onclick="switchTab('工作', this)">💼 工作明細</div>
+        <div class="sidebar-brand">PINK<br>PLANNER 🌸</div>
+        <div class="sidebar-item active" onclick="switchTab('工作', this)">💼 工作專業</div>
         <div class="sidebar-item" onclick="switchTab('個人', this)">🪴 個人成長</div>
     </div>
+
     <div class="main">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
-            <h1 id="view-title" style="font-size:2.5rem;">工作明細</h1>
-            <button class="btn-main" onclick="openModal('parent')">+ 新增大目標</button>
+        <div class="header-bar">
+            <h1 id="view-title">工作專業</h1>
+            <button class="btn-main" onclick="openModal('parent')">+ 設定新里程碑</button>
         </div>
-        <div id="content-area">連線雲端中...</div>
+        <div id="content-area">正在讀取雲端資料... 🕯️</div>
     </div>
 
     <div id="modal">
         <div class="modal-box">
             <h2 id="modal-title">管理項目</h2>
             <div id="modal-inputs"></div>
-            <button class="btn-main" style="width:100%; padding:15px;" onclick="handleSave()">確認儲存</button>
-            <button style="width:100%; background:none; border:none; color:#999; margin-top:15px; cursor:pointer;" onclick="closeModal()">取消</button>
+            <button class="btn-main" style="width:100%; padding: 18px; margin-top:20px;" onclick="handleSave()">儲存並發布</button>
+            <button style="width:100%; background:none; border:none; color:#999; margin-top:15px; cursor:pointer; font-size: 1rem;" onclick="closeModal()">取消返回</button>
         </div>
     </div>
 
     <script>
+        // ⚠️ 請在此處替換你的 GAS 網址
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwsA34kF_aireVj3YsXDhg6AaqHXcwoT4q3yLVuR-x5dXK2F_tiDO1HHjdXOJm8Zt31NA/exec"; 
+        
         let db = [];
         let currentCat = '工作';
-        let modalType = ''; // parent, sub, edit
+        let modalType = ''; 
         let activeId = null;
         let currentParent = '';
 
+        // 啟動連線
         async function init() {
             try {
                 const resp = await fetch(GAS_URL);
+                if (!resp.ok) throw new Error();
                 db = await resp.json();
                 render();
-            } catch(e) { document.getElementById('content-area').innerText = "連線失敗，請檢查 URL 及授權。"; }
+            } catch(e) {
+                document.getElementById('content-area').innerHTML = `<div style="color:#FF6B6B;">⚠️ 連線失敗！請檢查 GAS 是否正確發布為「所有人」，並已點擊授權。</div>`;
+            }
         }
 
+        // 切換頁面
+        function switchTab(cat, el) {
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            currentCat = cat;
+            document.getElementById('view-title').innerText = cat === '工作' ? '工作專業' : '個人成長';
+            render();
+        }
+
+        // 渲染畫面
         function render() {
             const area = document.getElementById('content-area');
             area.innerHTML = "";
             const filtered = db.filter(g => g.category === currentCat);
             const groups = [...new Set(filtered.map(item => item.parent))];
 
+            if (groups.length === 0) {
+                area.innerHTML = `<div style="text-align:center; color:#ccc; margin-top:50px;">目前尚無計畫，點擊右上角開始吧！✨</div>`;
+                return;
+            }
+
             groups.forEach(pName => {
-                const tasks = filtered.filter(t => t.parent === pName);
+                const tasks = filtered.filter(t => t.parent === pName && t.taskname !== '初始化任務');
+                const doneCount = tasks.filter(t => t.done === true || t.done === 'true').length;
+                const prog = tasks.length === 0 ? 0 : Math.round((doneCount / tasks.length) * 100);
+
                 const card = document.createElement('div');
                 card.className = 'group-card';
                 card.innerHTML = `
                     <div class="group-header">
-                        <div class="group-title" title="點擊編輯大項名稱" onclick="openModal('editParent', '${pName}')">📌 ${pName}</div>
-                        <button class="btn-icon" onclick="deleteParent('${pName}')">🗑️ 刪除整項</button>
+                        <div class="group-title">${pName}</div>
+                        <div style="display:flex; align-items:center; gap:25px;">
+                            <div style="text-align:right;">
+                                <div style="font-size:0.95rem; color:var(--accent); margin-bottom:8px; font-weight:600;">達成率 ${prog}%</div>
+                                <div class="prog-container"><div class="prog-fill" style="width:${prog}%"></div></div>
+                            </div>
+                            <button class="btn-icon" title="刪除整項計畫" onclick="deleteParent('${pName}')">🗑️</button>
+                        </div>
                     </div>
-                    <table><tbody id="list-${pName}"></tbody></table>
-                    <button class="btn-main" style="background:none; color:var(--accent); border:1px dashed var(--accent); width:100%; margin-top:15px;" onclick="openModal('sub', '${pName}')">+ 新增細節</button>
+                    <table><tbody></tbody></table>
+                    <button class="btn-sub-add" onclick="openModal('sub', '${pName}')">+ 加入執行步驟</button>
                 `;
+                
                 const tbody = card.querySelector('tbody');
                 tasks.forEach(t => {
-                    if(t.taskname === '初始化任務') return; // 過濾掉空任務
-                    const diffDays = Math.ceil((new Date(t.date) - new Date()) / (1000*60*60*24));
+                    const cd = getCountdown(t.date);
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td width="50"><input type="checkbox" style="width:25px; height:25px;" ${t.done == true || t.done == 'true' ? 'checked' : ''} onchange="toggleTask(${t.id})"></td>
-                        <td style="${t.done == true || t.done == 'true' ? 'text-decoration:line-through; color:#ccc' : ''}">${t.taskname}</td>
-                        <td width="150"><span class="countdown ${diffDays <= 3 ? 'cd-soon' : 'cd-safe'}">${diffDays >= 0 ? '剩 ' + diffDays + ' 天' : '已逾期'}</span></td>
-                        <td width="120" style="text-align:right;">
+                        <td width="60"><input type="checkbox" style="width:28px; height:28px; cursor:pointer;" ${t.done == true || t.done == 'true' ? 'checked' : ''} onchange="toggleTask(${t.id})"></td>
+                        <td><span class="task-text ${t.done == true || t.done == 'true' ? 'task-done' : ''}">${t.taskname}</span></td>
+                        <td width="180"><span class="countdown ${cd.class}">${cd.text}</span></td>
+                        <td width="130" style="text-align:right;">
                             <button class="btn-icon" onclick="openModal('editSub', '', ${t.id})">✎</button>
                             <button class="btn-icon" onclick="deleteTask(${t.id})">🗑️</button>
                         </td>
@@ -106,49 +211,80 @@
             });
         }
 
-        async function sync(data) {
-            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(data) });
-            init();
+        // 倒數計算
+        function getCountdown(dateStr) {
+            if(!dateStr) return { text: "未定時", class: "cd-over" };
+            const today = new Date(); today.setHours(0,0,0,0);
+            const target = new Date(dateStr);
+            const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+            if (diffDays < 0) return { text: "已逾期", class: "cd-over" };
+            if (diffDays === 0) return { text: "今日到期 🔥", class: "cd-soon" };
+            if (diffDays <= 3) return { text: `剩 ${diffDays} 天 ⏳`, class: "cd-soon" };
+            return { text: `還有 ${diffDays} 天`, class: "cd-safe" };
         }
 
+        // 雲端同步
+        async function sync(data) {
+            await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(data) });
+            init(); // 同步完刷新資料
+        }
+
+        // 彈窗控制
         function openModal(type, pName = '', id = null) {
             modalType = type; currentParent = pName; activeId = id;
             document.getElementById('modal').style.display = 'flex';
             const inputs = document.getElementById('modal-inputs');
-            if(type === 'parent' || type === 'editParent') {
-                inputs.innerHTML = `<input type="text" id="in-name" value="${pName}" placeholder="目標名稱">`;
+            
+            if(type === 'parent') {
+                document.getElementById('modal-title').innerText = '設定大目標';
+                inputs.innerHTML = `<input type="text" id="in-name" placeholder="目標名稱 (如: 2026 英文檢定)">`;
             } else {
                 const t = db.find(x => x.id == id);
-                inputs.innerHTML = `<input type="text" id="in-name" value="${t?t.taskname:''}" placeholder="任務名稱"><input type="date" id="in-date" value="${t?t.date:''}">`;
+                document.getElementById('modal-title').innerText = id ? '編輯內容' : '加入子任務';
+                inputs.innerHTML = `
+                    <input type="text" id="in-name" value="${t?t.taskname:''}" placeholder="任務名稱">
+                    <input type="date" id="in-date" value="${t?t.date:''}">
+                `;
             }
         }
 
         async function handleSave() {
             const name = document.getElementById('in-name').value;
             const date = document.getElementById('in-date')?.value;
-            let payload = { category: currentCat, action: 'add' };
+            if(!name) return;
 
-            if(modalType === 'parent') { payload = { ...payload, id: Date.now(), parent: name, name: '初始化任務', date: new Date().toISOString().split('T')[0] }; }
-            else if(modalType === 'editParent') { 
-                alert('大項編輯建議透過修改試算表或聯繫開發者，此功能將批量更新所有子項的 Parent 欄位。'); 
-                // 此處簡化處理，實際開發中建議大項編輯採 ID 關聯
+            let payload = { category: currentCat };
+            if(modalType === 'parent') {
+                payload = { ...payload, id: Date.now(), parent: name, name: '初始化任務', date: new Date().toISOString().split('T')[0], action: 'add' };
+            } else if(modalType === 'sub') {
+                payload = { ...payload, id: Date.now(), parent: currentParent, name: name, date: date, action: 'add' };
+            } else if(modalType === 'editSub') {
+                payload = { id: activeId, name: name, date: date, action: 'edit' };
             }
-            else if(modalType === 'sub') { payload = { ...payload, id: Date.now(), parent: currentParent, name: name, date: date }; }
-            else if(modalType === 'editSub') { payload = { id: activeId, name: name, date: date, action: 'edit' }; }
-
+            
             closeModal();
             await sync(payload);
         }
 
-        async function toggleTask(id) { const t = db.find(x => x.id == id); await sync({ id: id, done: !t.done, action: 'toggle' }); }
-        async function deleteTask(id) { if(confirm('刪除子任務？')) await sync({ id: id, action: 'delete' }); }
-        async function deleteParent(pName) { if(confirm('確定刪除整項計畫（包含所有子任務）？')) await sync({ category: currentCat, parent: pName, action: 'deleteParent' }); }
-        function closeModal() { document.getElementById('modal').style.display = 'none'; }
-        function switchTab(cat, el) { 
-            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-            el.classList.add('active'); currentCat = cat; render(); 
+        async function toggleTask(id) {
+            const task = db.find(t => t.id == id);
+            const isDone = !(task.done === true || task.done === 'true');
+            await sync({ id: id, done: isDone, action: 'toggle' });
         }
 
+        async function deleteTask(id) {
+            if(confirm('確定要刪除這項任務嗎？')) await sync({ id: id, action: 'delete' });
+        }
+
+        async function deleteParent(pName) {
+            if(confirm(`確定要刪除整個「${pName}」嗎？這會移除旗下所有子任務。`)) {
+                await sync({ category: currentCat, parent: pName, action: 'deleteParent' });
+            }
+        }
+
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+        // 初始化
         init();
     </script>
 </body>
